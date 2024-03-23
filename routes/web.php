@@ -41,9 +41,10 @@ Route::post('/update-cart', [cartController::class, 'updateCart'])->name('front.
 Route::delete('/remove-cart', [cartController::class, 'removeFromCart'])->name('front.remove');
 Route::get('/checkout', [cartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [cartController::class, 'processCheckout'])->name('front.processCheckout');
+Route::get('/thanks/{orderId}', [cartController::class, 'thankyou'])->name('front.thankyou');
 
 
-Route::group(['prefix' => 'account'], function () {
+Route::group(['prefix' => 'account'], function () { 
     Route::group(['middleware' => 'guest'], function () {
         Route::get('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/processRegister', [AuthController::class, 'processRegister'])->name('account.processRegister');

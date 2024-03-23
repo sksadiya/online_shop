@@ -26,13 +26,13 @@
                                 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name">
+                                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" value="{{ (!empty($adds)) ? $adds->first_name : ''}}">
                                     <p></p>          
                                     </div>  
                                 </div>
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name">
+                                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name" value="{{ (!empty($adds)) ? $adds->last_name : ''}}">
                                     <p></p>          
 
                                     </div>            
@@ -40,7 +40,7 @@
                                 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="email" id="email" class="form-control" placeholder="Email">
+                                        <input type="text" name="email" id="email" class="form-control" placeholder="Email" value="{{ (!empty($adds)) ? $adds->email : ''}}">
                                     <p></p>          
 
                                     </div>            
@@ -52,7 +52,7 @@
                                             <option value="">Select a Country</option>
                                             @if($countries->isNotEmpty())
                                             @foreach($countries as $country)
-                                            <option value="{{$country->id}}">{{$country->name}}</option>
+                                            <option {{( !empty($adds) && $adds->country_id == $country->id) ? "selected" : " "}} value="{{$country->id}}">{{$country->name}}</option>
                                             @endforeach
                                             @endif
                                         </select>
@@ -63,7 +63,7 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <textarea name="address" id="address" cols="30" rows="3" placeholder="Address" class="form-control"></textarea>
+                                        <textarea name="address" id="address" cols="30" rows="3" placeholder="Address" class="form-control">{{ (!empty($adds)) ? $adds->address : ''}}</textarea>
                                     <p></p>          
 
                                     </div>            
@@ -71,7 +71,7 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="appartment" id="appartment" class="form-control" placeholder="Apartment, suite, unit, etc. (optional)">
+                                        <input type="text" name="appartment" id="appartment" class="form-control" value="{{ (!empty($adds)) ? $adds->apartment : ''}}" placeholder="Apartment, suite, unit, etc. (optional)">
                                     <p></p>          
 
                                     </div>            
@@ -79,7 +79,7 @@
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="city" id="city" class="form-control" placeholder="City">
+                                        <input type="text" name="city" id="city" class="form-control" value="{{ (!empty($adds)) ? $adds->city : ''}}" placeholder="City">
                                     <p></p>          
 
                                     </div>            
@@ -87,7 +87,7 @@
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="state" id="state" class="form-control" placeholder="State">
+                                        <input type="text" name="state" id="state" class="form-control" value="{{ (!empty($adds)) ? $adds->state : ''}}" placeholder="State">
                                     <p></p>          
 
                                     </div>            
@@ -95,7 +95,7 @@
                                 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="zip" id="zip" class="form-control" placeholder="Zip">
+                                        <input type="text" name="zip" id="zip" class="form-control" value="{{ (!empty($adds)) ? $adds->zip : ''}}" placeholder="Zip">
                                     <p></p>          
 
                                     </div>            
@@ -103,14 +103,14 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Mobile No.">
+                                        <input type="text" name="mobile" id="mobile" class="form-control" value="{{ (!empty($adds)) ? $adds->mobile : ''}}" placeholder="Mobile No.">
                                     </div>            
                                 </div>
                                 
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <textarea name="order_notes" id="order_notes" cols="30" rows="2" placeholder="Order Notes (optional)" class="form-control"></textarea>
+                                        <textarea name="order_notes" id="order_notes" cols="30" rows="2" placeholder="Order Notes (optional)" class="form-control">{{ (!empty($adds)) ? $adds->notes : ''}}</textarea>
                                     <p></p>          
 
                                     </div>            
@@ -205,7 +205,7 @@ $("#payment2").click(function(){
 
 $("#orderForm").submit(function(event) {
     event.preventDefault();
-
+    $("button[type='submit']").prop('disabled' ,true);
     $.ajax({
         url:'{{ route('front.processCheckout') }}',
         type:'post',
@@ -213,6 +213,8 @@ $("#orderForm").submit(function(event) {
         dataType:'json',
         success :  function(response){ 
                 var errors = response.errors;
+                $("button[type='submit']").prop('disabled' ,false);
+                if(response.status == false) {
                 if(errors.first_name){
                         $("#first_name").addClass('is-invalid')
                         .siblings("p")
@@ -312,6 +314,9 @@ $("#orderForm").submit(function(event) {
                         .removeClass('invalid-feedback')
                         .html("");
                  }
+                }  else {
+                    window.location.href = "{{ url('thanks/') }}/"+response.orderId; 
+                }
         }
     });
 });

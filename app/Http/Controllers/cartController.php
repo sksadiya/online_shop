@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use App\Models\Order;
+use App\Models\OrderItems;
 use App\Models\product;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -127,10 +128,11 @@ class cartController extends Controller
             return redirect()->route('account.login');
 
         }
+        $user = Auth::user();
         session()->forget('url.intended');
-
+        $adds = CustomerAddress::where('user_id', $user->id)->first(); 
         $countries = Country::orderBy('name','ASC')->get();
-        return view('front.checkout' ,compact( 'countries') );
+        return view('front.checkout' ,compact( 'countries' ,'adds') );
     }
 
     public function processCheckout(Request $request) {
@@ -199,11 +201,33 @@ class cartController extends Controller
             $order->zip = $request->zip ;
             $order->notes = $request->notes ;
             $order->country_id = $request->country ;
-
             $order->save();
 
+            //store order items in rder item table
+            foreach(Cart::content() as $item) {
+                $orderItem = new OrderItems;
+                $orderItem->product_id = $item->id ;
+                $orderItem->order_id = $order->id ;
+                $orderItem->name = $item->name ;
+                $orderItem->qty = $item->qty ;
+                $orderItem->price = $item->price ;
+                $orderItem->total = $item->price * $item->qty;
+                $orderItem->save();
+             }
+             
+             session()->flash('success','You have placed order successfully');
+             Cart::destroy();
+             return response()->json([
+                'status' => true ,
+                'message'=> "Order Placed Successfully",
+                'orderId' => $order->id
+             ]);
         } else {
 
         }
     } 
+
+    public function thankyou($id) {
+        return view('front.thankyou',compact('id'));
+    }
 }
