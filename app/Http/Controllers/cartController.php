@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
+use App\Models\Order;
 use App\Models\product;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Auth;
+use App\Models\CustomerAddress;
+use Validator;
 
 class cartController extends Controller
 {
@@ -109,4 +114,96 @@ class cartController extends Controller
             'message' => "item removed successfully"
         ]);
     }
+
+    public function checkout() {
+        //if cart is empty redirect to cart page
+        if(Cart::count() == 0) {
+            return redirect()->route('front.cart');
+        }
+
+        //if user is not logged in then redirect to login page
+        if(Auth::check() == false ) {
+            session()->put('url.intended', route('front.checkout'));
+            return redirect()->route('account.login');
+
+        }
+        session()->forget('url.intended');
+
+        $countries = Country::orderBy('name','ASC')->get();
+        return view('front.checkout' ,compact( 'countries') );
+    }
+
+    public function processCheckout(Request $request) {
+        $validator = Validator::make( $request->all(), [
+            'first_name' => 'required|min:5' ,
+            'last_name' => 'required' ,
+            'email' => 'required|email' ,
+            'country' => 'required' ,
+            'address' => 'required|min:30' ,
+            'city' => 'required' ,
+            'state' => 'required' ,
+            'zip' => 'required' ,
+            'mobile' => 'required' ,
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                'message' => 'please fix the errors',
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+
+        //save user adddress
+        $user = Auth::user();
+        $customerAddress = CustomerAddress::updateOrCreate(
+            ['user_id'  => $user->id] ,
+            [
+                'user_id' =>$user->id,
+                'first_name' => $request->first_name,
+                'last_name'=> $request->last_name,
+                'email'     => $request->email,
+                'mobile'     => $request->mobile,
+                'address'   => $request->address,
+                'apartment'   => $request->apartment,
+                'city'=> $request->city,
+                'state'     => $request->state,
+                'zip'=> $request->zip,
+                'country_id'   => $request->country,
+            ]
+        );
+
+        //save data in orders table
+        if($request->payment_method == "cod") { 
+            $shipping = 0;
+            $discount = 0;
+            $subTotal = Cart::subtotal(2,'.','');
+            $grandTotal = $subTotal+$shipping ;
+
+
+            $order = new Order;
+            $order->subtotal = $subTotal ;
+            $order->shipping = $shipping ;
+            $order->grand_total = $grandTotal ;
+            $order->grand_total = $grandTotal ;
+            $order->user_id =  $user->id ;
+            $order->first_name = $request->first_name ;
+            $order->last_name = $request->last_name ;
+            $order->email = $request->email ;
+            $order->mobile = $request->mobile ;
+            $order->address = $request->address ;
+            $order->apartment = $request->apartment ;
+            $order->state = $request->state ;
+            $order->city = $request->city ;
+            $order->zip = $request->zip ;
+            $order->notes = $request->notes ;
+            $order->country_id = $request->country ;
+
+            $order->save();
+
+        } else {
+
+        }
+    } 
 }
