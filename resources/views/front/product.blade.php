@@ -53,11 +53,7 @@
                         @endif
                         <h2 class="price ">${{ $product->price }}</h2>
                         <p>{!! $product->short_description !!}</p>
-<<<<<<< HEAD
                         <a href="javascript:void(0)" onclick="addToCart({{ $product->id }});" class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
-=======
-                        <a href="cart.php" class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
->>>>>>> f86980bd74790b222ea05d915df0204ba248c157
                     </div>
                 </div>
 

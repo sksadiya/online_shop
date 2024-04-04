@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\Categories;
 use App\Http\Controllers\admin\HomeConroller;
+use App\Http\Controllers\admin\shippingController;
 use App\Http\Controllers\admin\tempImagesController;
 use App\Http\Controllers\admin\subCategoryController;
 use App\Http\Controllers\admin\brandsController;
@@ -42,6 +43,7 @@ Route::delete('/remove-cart', [cartController::class, 'removeFromCart'])->name('
 Route::get('/checkout', [cartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [cartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}', [cartController::class, 'thankyou'])->name('front.thankyou');
+Route::post('/get-order-summary', [cartController::class, 'getOrderSummary'])->name('front.summary');
 
 
 Route::group(['prefix' => 'account'], function () { 
@@ -112,6 +114,13 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/category/delete/{id}', [Categories::class, 'destroy'])->name('categories.destroy');
         Route::post('/upload-temp', [tempImagesController::class, 'create'])->name('temp-image.create');
 
+        Route::get('/shipping/create', [shippingController::class, 'create'])->name('shipping.create');
+        Route::get('/shipping', [shippingController::class, 'index'])->name('shipping.index');
+        Route::post('/shipping', [shippingController::class, 'store'])->name('shipping.store');
+        Route::delete('/shipping/delete/{id}', [shippingController::class, 'destroy'])->name('shipping.destroy');
+        Route::get('/shipping/edit/{id}', [shippingController::class, 'edit'])->name('shipping.edit');
+        Route::post('/shipping/update/{id}', [shippingController::class, 'update'])->name('shipping.update');
+        
 
         Route::get('/getSlug', function (Request $request) {
             $slug = '';

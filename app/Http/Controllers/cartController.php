@@ -6,6 +6,7 @@ use App\Models\Country;
 use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\product;
+use App\Models\shippingCharge;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
@@ -132,7 +133,26 @@ class cartController extends Controller
         session()->forget('url.intended');
         $adds = CustomerAddress::where('user_id', $user->id)->first(); 
         $countries = Country::orderBy('name','ASC')->get();
-        return view('front.checkout' ,compact( 'countries' ,'adds') );
+
+        //calculate shipping
+        if($adds != '') {
+            $userCountry = $adds->country_id;
+            $shippingInfo = shippingCharge::where('country_id',$userCountry)->first();
+            $totalQty = 0;
+            $shippingCharge = 0;
+            $grandTotal = 0;
+            foreach(Cart::content() as $item) {
+                $totalQty += $item->qty ;
+            }
+    
+            $shippingCharge = $totalQty * $shippingInfo->amount;
+            $grandTotal = Cart::subtotal('2','.','')+$shippingCharge;
+        } else {
+            $shippingCharge = 0;
+            $grandTotal = Cart::subtotal('2','.','');
+        }
+       
+        return view('front.checkout' ,compact( 'countries' ,'adds','shippingCharge','grandTotal') );
     }
 
     public function processCheckout(Request $request) {
@@ -178,10 +198,29 @@ class cartController extends Controller
 
         //save data in orders table
         if($request->payment_method == "cod") { 
+
             $shipping = 0;
             $discount = 0;
             $subTotal = Cart::subtotal(2,'.','');
-            $grandTotal = $subTotal+$shipping ;
+            
+            $shippingInfo = shippingCharge::where('country_id',$request->country)->first();
+            $totalQty = 0;
+            foreach(Cart::content() as $item) {
+                $totalQty += $item->qty;
+             }
+            if($shippingInfo != null) {
+                $shipping = $totalQty*$shippingInfo->amount;
+                
+                $grandTotal = $subTotal+$shipping;
+                    
+                } else {
+               $shippingInfo = shippingCharge::where('country_id','rest_of_world')->first();
+               $shipping = $totalQty*$shippingInfo->amount;
+                
+               $grandTotal = $subTotal+$shipping;
+                }
+
+           
 
 
             $order = new Order;
@@ -229,5 +268,43 @@ class cartController extends Controller
 
     public function thankyou($id) {
         return view('front.thankyou',compact('id'));
+    }
+
+    public function getOrderSummary(Request $request) {
+        $subtotal = Cart::subtotal(2,'.','');
+
+        if($request->country_id > 0) {
+           $shippingInfo = shippingCharge::where('country_id',$request->country_id)->first();
+            $totalQty = 0;
+            foreach(Cart::content() as $item) {
+                $totalQty += $item->qty;
+             }
+           if($shippingInfo != null) {
+            $shippingCharge = $totalQty*$shippingInfo->amount;
+            
+            $grandTotal = $subtotal+$shippingCharge;
+                return response()->json([
+                    'status' => true,
+                    'grandTotal'=> number_format($grandTotal,2),
+                    'shippingCharge' => number_format($shippingCharge,2)
+                ]);
+            } else {
+           $shippingInfo = shippingCharge::where('country_id','rest_of_world')->first();
+           $shippingCharge = $totalQty*$shippingInfo->amount;
+            
+           $grandTotal = $subtotal+$shippingCharge;
+           return response()->json([
+            'status' => true,
+            'grandTotal'=> number_format($grandTotal,2),
+            'shippingCharge' => number_format($shippingCharge,2)
+        ]);
+            }
+        } else {
+            return response()->json([
+                'status' => true,
+                'grandTotal'=> $subtotal,
+                'shippingCharge' => number_format(0,2)
+            ]);
+        }
     }
 }
