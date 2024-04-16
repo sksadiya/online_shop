@@ -9,34 +9,24 @@ use Validator;
 class DiscountCodeController extends Controller
 {
     public function index() {
-        
+       return view('admin.coupons.list'); 
     }
     public function create() {
 
         return view('admin.coupons.create');
     }
     public function store(Request $request) {
-        $validator = Validator::make($request->all(),[
+        $validator = validator::make($request->all(), [
             'code' => 'required',
-            'name' => '',
-            'max_uses' => '',
-            'max_uses_user' => '',
             'type' => 'required',
             'discount_amount' => 'required|numeric',
-            'min_amount' => '',
             'status' => 'required',
-            'starts_at' => '',
-            'expires_at' => '',
-            'description' => '',
         ]);
-
-        if($validator->passes()) {
-
+        if ($validator->passes()) {
+            session()->flash('success', 'coupon created successfully');
+            return redirect()->route('coupons.index');
         } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors(),
-            ]);
+            return redirect()->route('coupons.create')->withErrors($validator)->withInput();
         }
     }
     public function edit() {

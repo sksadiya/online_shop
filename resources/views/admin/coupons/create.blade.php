@@ -18,6 +18,7 @@
 				<section class="content">
 					<!-- Default box -->
 					<form action="{{ route('coupons.store') }}" name="couponForm" id="couponForm" method="post">
+					@csrf
 					<div class="container-fluid">
 						<div class="card">
 							<div class="card-body">								
@@ -121,37 +122,24 @@
 @endsection
 @section('customJs')
 <script>
-   $('#couponForm').submit(function(event) {
-    event.preventDefault();
+$('#couponForm').submit(function(event) {
+	event.preventDefault(); 
     let element = $(this);
     $('button[type=submit]').prop('disabled',true);
     $.ajax({
-         url: element.attr('action'),
+         url: "{{ route('coupons.store') }}",
         type:'post',
         data:element.serializeArray(),
         dataType:'json',
         success:function(response) {
             $('button[type=submit]').prop('disabled', false);
-
-            if(response['status'] == true) {
-                const redirectToList = '{{ route("coupons.index") }}';
-                window.location.href = redirectToList ;
-                $('#name').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
-
-            } else {
-            let errors =response['errors'];
-            if(errors['name']) {
-                $('#name').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-            } else {
-                $('#name').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
-
-            }
-        }
+            
+           
         },
         error:function(jqXHR,exception) {
             console.log('something went wrong');
         }
     })
-})  
+})
 </script>
 @endsection

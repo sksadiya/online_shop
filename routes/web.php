@@ -126,9 +126,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/coupons/create', [DiscountCodeController::class, 'create'])->name('coupons.create');
         Route::get('/coupons', [DiscountCodeController::class, 'index'])->name('coupons.index');
         Route::post('/coupons', [DiscountCodeController::class, 'store'])->name('coupons.store');
-        Route::delete('/coupons/delete/{id}', [DiscountCodeController::class, 'destroy'])->name('coupons.destroy');
-        Route::get('/coupons/edit/{id}', [DiscountCodeController::class, 'edit'])->name('coupons.edit');
-        Route::post('/coupons/update/{id}', [DiscountCodeController::class, 'update'])->name('coupons.update');
+        // Route::delete('/coupons/delete/{id}', [DiscountCodeController::class, 'destroy'])->name('coupons.destroy');
+        // Route::get('/coupons/edit/{id}', [DiscountCodeController::class, 'edit'])->name('coupons.edit');
+        // Route::post('/coupons/update/{id}', [DiscountCodeController::class, 'update'])->name('coupons.update');
         
 
         Route::get('/getSlug', function (Request $request) {
