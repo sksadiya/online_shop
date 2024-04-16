@@ -19,6 +19,7 @@
 		<link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
 		<script src="{{ asset('admin-assets/plugins/jquery/jquery.min.js') }}"></script>
         <link rel="stylesheet" href="{{ asset('admin-assets/plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('admin-assets/css/datetimepicker.css') }}">
 <style>
 	.select2-container--default .select2-selection--multiple .select2-selection__choice  {
 		color:#000 !important;

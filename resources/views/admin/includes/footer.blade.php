@@ -10,6 +10,7 @@
 
 
         <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js') }}"></script>
+        <script src="{{ asset('admin-assets/js/datetimepicker.js') }}"></script>
 
 		<!-- AdminLTE for demo purposes -->
 		<!-- <script src="{{ asset('js/demo.js') }}"></script> -->
@@ -26,6 +27,13 @@
                     height: '300px'
                 });
    });
+
+        $(document).ready(function(){
+            $('.demodate').datetimepicker({
+                // options here
+                format:'Y-m-d H:i:s',
+            });
+        });
         </script>
 	</body>
 </html>
