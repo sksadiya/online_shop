@@ -32,6 +32,8 @@
             $('.demodate').datetimepicker({
                 // options here
                 format:'Y-m-d H:i:s',
+								timezone: 'Asia/Kolkata',
+								defaultDate: new Date()
             });
         });
         </script>

@@ -138,6 +138,10 @@
                                 <div class="h6"><strong>Subtotal</strong></div>
                                 <div class="h6"><strong>${{Cart::Subtotal()}}</strong></div>
                             </div>
+                            <div class="d-flex justify-content-between summery-end">
+                                <div class="h6"><strong>Discount</strong></div>
+                                <div class="h6"><strong id="discount_value">{{ $discount }}</strong></div>
+                            </div>
                             <div class="d-flex justify-content-between mt-2">
                                 <div class="h6"><strong>Shipping</strong></div>
                                 <div class="h6"><strong id="shippingAmount">${{number_format($shippingCharge,2)}}</strong></div>
@@ -147,8 +151,18 @@
                                 <div class="h5"><strong id="grandTotal">${{number_format($grandTotal ,2)}}</strong></div>
                             </div>                            
                         </div>
-                    </div>   
-                    
+                     <div class="input-group apply-coupan mt-4">
+                        <input type="text" placeholder="Coupon Code" class="form-control" name="discount_code" id="discount_code">
+                        <button class="btn btn-dark" type="button" id="apply-coupon">Apply Coupon</button>
+                    </div> 
+                    @if (session()->has('code'))
+                    <div class="mt-4" id="coupon-container">
+                        <strong>{{ Session::get('code')->code }}</strong>
+                        <button class="btn btn-sm btn-danger" id="remove-discount" ><i class="fa fa-times"></i></button>
+                    </div> 
+                    @endif
+                   
+
                     <div class="card payment-form ">  
                     <h3 class="card-title h5 mb-3">Payment Method</h3>
 
@@ -334,6 +348,56 @@ $("#country").change(function(){
 } else {
     console.log("Status is not true");
 }
+        }
+    })
+});
+
+$('#apply-coupon').click(function() {
+    
+    $.ajax({
+        url:'{{ route('front.discount')}}',
+        type: 'post',
+        data: {code : $('#discount_code').val() ,country_id : $('#country').val()},
+        dataType:'json',
+        success : function(response) {
+            if (response.status === true) {
+
+                $("#shippingAmount").html(response.shippingCharge);
+                $("#grandTotal").html(response.grandTotal);
+                $("#discount_value").html(response.discount);
+                window.location.reload();
+            } else {
+                console.error('Coupon application failed:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+            console.log('Raw Response:', xhr.responseText);
+        }
+    })
+});
+
+$('#coupon-container').on('click', '#remove-discount', function(event) {
+    event.preventDefault();
+    $.ajax({
+        url:'{{ route('remove.discount')}}',
+        type: 'post',
+        data: {country_id : $('#country').val()},
+        dataType:'json',
+        success : function(response) {
+            console.log(response['status']);
+            if (response.status === true) {
+                $("#shippingAmount").html(response.shippingCharge);
+                $("#grandTotal").html(response.grandTotal);
+                $("#discount_value").html(response.discount);
+                $("#coupon-container").html('');
+            } else {
+                console.error('Coupon application failed:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error);
+            console.log('Raw Response:', xhr.responseText);
         }
     })
 });

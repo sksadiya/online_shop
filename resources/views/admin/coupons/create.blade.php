@@ -26,8 +26,10 @@
 									<div class="col-md-6">
 										<div class="mb-3">
 											<label for="code">Code</label>
-											<input type="text" name="code" id="code" class="form-control" placeholder="coupon code">
-											<p></p>	
+											<input type="text" name="code" id="code" class="form-control  @error('code') is-invalid @enderror" placeholder="coupon code">
+											@error('code') 
+											<p class="invalid-feedback">{{ $message }}</p>	
+											@enderror
 										</div>
 									</div>
 									<div class="col-md-6">
@@ -55,18 +57,23 @@
 									<div class="col-md-6">
 										<div class="mb-3">
 											<label for="type">Type</label>
-											<select name="type" id="type" class="form-control">
+											<select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
 												<option value="percent">Percent</option>
 												<option value="fixed">Fixed</option>
                                     		</select>
-											<p></p>
+																				@error('type') 
+											<p class="invalid-feedback">{{ $message }}</p>
+
+																				 @enderror
 										</div>
 									</div>	
                                     <div class="col-md-6">
 										<div class="mb-3">
 											<label for="discount_amount">Discount Amount</label>
-											<input type="text" name="discount_amount" id="discount_amount" class="form-control" placeholder="Discount Amount">	
-											<p></p>
+											<input type="text" name="discount_amount" id="discount_amount" class="form-control @error('discount_amount') is-invalid @enderror" placeholder="Discount Amount">
+											@error('discount_amount')
+											<p class="invalid-feedback">{{ $message }}</p>
+											@enderror	
 										</div>
 									</div>									
                                     <div class="col-md-6">
@@ -79,25 +86,35 @@
 									<div class="col-md-6">
 										<div class="mb-3">
 											<label for="status">Status</label>
-											<select name="status" id="status" class="form-control">
+											<select name="status" id="status" class="form-control @error('status') is-invalid @enderror">
 												<option value="1">Active</option>
 												<option value="0">Block</option>
                                     		</select>
-											<p></p>
+																				@error('status') 
+											<p class="invalid-feedback">{{ $message }}</p>
+									@enderror
 										</div>
 									</div>	
                                     <div class="col-md-6">
-										<div class="mb-3">
-											<label for="starts_at">Starts At </label>
-											<input type="text" name="starts_at" id="starts_at" class="form-control demodate">	
-											<p></p>
-										</div>
+																		<div class="mb-3">
+    <label for="starts_at">Starts At</label>
+    <input type="text" name="starts_at" id="starts_at" class="form-control demodate @error('starts_at') is-invalid @enderror" value="{{ old('starts_at') }}"> 
+    @error('starts_at')
+        <p class="invalid-feedback" role="alert">
+           {{ $message }}
+        </p>
+    @enderror
+</div>
 									</div>									
                                     <div class="col-md-6">
 										<div class="mb-3">
 											<label for="expires_at">Expires At </label>
-											<input type="text" name="expires_at" id="expires_at" class="form-control demodate">	
-											<p></p>
+											<input type="text" name="expires_at" id="expires_at" class="form-control demodate @error('expires_at') is-invalid @enderror">	
+											@error('expires_at')
+        <p class="invalid-feedback" role="alert">
+           {{ $message }}
+        </p>
+    @enderror
 										</div>
 									</div>
                                     <div class="col-md-6">
@@ -121,25 +138,5 @@
 				<!-- /.content -->
 @endsection
 @section('customJs')
-<script>
-$('#couponForm').submit(function(event) {
-	event.preventDefault(); 
-    let element = $(this);
-    $('button[type=submit]').prop('disabled',true);
-    $.ajax({
-         url: "{{ route('coupons.store') }}",
-        type:'post',
-        data:element.serializeArray(),
-        dataType:'json',
-        success:function(response) {
-            $('button[type=submit]').prop('disabled', false);
-            
-           
-        },
-        error:function(jqXHR,exception) {
-            console.log('something went wrong');
-        }
-    })
-})
-</script>
+
 @endsection
