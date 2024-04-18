@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\frontController;
 use App\Http\Controllers\shopController;
+use App\Http\Controllers\admin\orderController;
 use Illuminate\Support\Str;
 
 /*
@@ -32,6 +33,9 @@ use Illuminate\Support\Str;
 
 // Route::get('/', function () {
 //     return view('welcome');
+// });
+// Route::get('/test', function () {
+//    orderEmail(27);
 // });
 
 Route::get('/', [frontController::class, 'index'])->name('home');
@@ -60,6 +64,8 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/logout', [AuthController::class, 'logout'])->name('account.logout');
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::get('/orders', [AuthController::class, 'orders'])->name('account.orders');
+        Route::get('/orderDetail/{orderId}', [AuthController::class, 'orderDetail'])->name('account.orderDetail');
         
     });
 });
@@ -132,6 +138,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/coupons/edit/{id}', [DiscountCodeController::class, 'edit'])->name('coupons.edit');
         Route::post('/coupons/update/{id}', [DiscountCodeController::class, 'update'])->name('coupons.update');
         
+        //orders
+        Route::get('/orders', [orderController::class, 'index'])->name('admin.orders');
+        Route::get('/order-detail/{id}', [orderController::class, 'detail'])->name('admin.orderDetail');
+        Route::post('/changeOrderStatus/{id}', [orderController::class, 'changeOrderStatus'])->name('admin.changeOrderStatus');
 
         Route::get('/getSlug', function (Request $request) {
             $slug = '';

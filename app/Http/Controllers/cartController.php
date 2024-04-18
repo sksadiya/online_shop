@@ -236,6 +236,7 @@ class cartController extends Controller
         //save data in orders table
         if ($request->payment_method == "cod") {
             $discountCode = '';
+            $discountCodeId = null;
             $shipping = 0;
             $discount = 0;
             $subTotal = Cart::subtotal(2, '.', '');
@@ -247,6 +248,7 @@ class cartController extends Controller
                     $discount = $code->discount_amount;
                 }
                 $discountCode = $code->code;
+                $discountCodeId = $code->id;
             }
             $shippingInfo = shippingCharge::where('country_id', $request->country)->first();
             $totalQty = 0;
@@ -270,6 +272,9 @@ class cartController extends Controller
             $order->grand_total = $grandTotal;
             $order->discount = $discount;
             $order->coupon_code = $discountCode;
+            $order->coupon_code_id = $discountCodeId;
+            $order->payment_status = 'unpaid';
+            $order->status = 'pending';
             $order->user_id = $user->id;
             $order->first_name = $request->first_name;
             $order->last_name = $request->last_name;
@@ -295,7 +300,8 @@ class cartController extends Controller
                 $orderItem->total = $item->price * $item->qty;
                 $orderItem->save();
             }
-
+            //send order email
+            orderEmail($order->id);
             session()->flash('success', 'You have placed order successfully');
             Cart::destroy();
             session()->forget('code');
@@ -340,7 +346,7 @@ class cartController extends Controller
                 return response()->json([
                     'status' => true,
                     'grandTotal' => number_format($grandTotal, 2),
-                    'discount' => $discount,
+                    'discount' => number_format($discount, 2),
                     'shippingCharge' => number_format($shippingCharge, 2)
                 ]);
             } else {
@@ -351,7 +357,7 @@ class cartController extends Controller
                 return response()->json([
                     'status' => true,
                     'grandTotal' => number_format($grandTotal, 2),
-                    'discount' => $discount,
+                    'discount' => number_format($discount, 2),
                     'shippingCharge' => number_format($shippingCharge, 2)
                 ]);
             }
@@ -359,7 +365,7 @@ class cartController extends Controller
             return response()->json([
                 'status' => true,
                 'grandTotal' => number_format(($subtotal-$discount), 2),
-                'discount' => $discount,
+                'discount' => number_format($discount, 2),
                 'shippingCharge' => number_format(0, 2)
             ]);
         }
@@ -394,6 +400,41 @@ class cartController extends Controller
                 ]);
             }
         }
+        //max uses check
+        if($code->max_uses > 0 ) {
+            $couponUsed = Order::where('coupon_code_id',$code->id)->count();
+            if($couponUsed >= $code->max_uses) {
+                return response()->json([
+                    'status' =>false,
+                    'message' =>'coupon exceeds its limit'
+                ]);
+            }
+        }
+        
+
+        //max_user_uses check
+        if($code->max_uses_user > 0 ) {
+        $couponUsedByUser = Order::where([
+            'coupon_code_id' => $code->id,
+            'user_id' => Auth::user()->id
+        ])->count();
+        if($couponUsedByUser >= $code->max_uses_user) {
+            return response()->json([
+                'status' =>false,
+                'message' =>'You have reached the limit for using this coupon.'
+            ]);
+        }
+    }
+    $subTotal = Cart::subtotal(2,'.','');
+    //ceck min amount
+    if($code->min_amount > 0 ) {
+        if($subTotal < $code->min_amount ) {
+            return response()->json([
+                'status' =>false,
+                'message' =>'your minimum amount must be'.$code->min_amount.'.'
+            ]);
+        }
+    }
         session()->put('code',$code);
         return $this->getOrderSummary($request);
     }

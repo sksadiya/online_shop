@@ -155,12 +155,14 @@
                         <input type="text" placeholder="Coupon Code" class="form-control" name="discount_code" id="discount_code">
                         <button class="btn btn-dark" type="button" id="apply-coupon">Apply Coupon</button>
                     </div> 
+                    <div id="coupon-wrapper">
                     @if (session()->has('code'))
                     <div class="mt-4" id="coupon-container">
                         <strong>{{ Session::get('code')->code }}</strong>
                         <button class="btn btn-sm btn-danger" id="remove-discount" ><i class="fa fa-times"></i></button>
                     </div> 
                     @endif
+                    </div>
                    
 
                     <div class="card payment-form ">  
@@ -367,6 +369,7 @@ $('#apply-coupon').click(function() {
                 $("#discount_value").html(response.discount);
                 window.location.reload();
             } else {
+                $("#coupon-wrapper").html( "<span class='text-danger'>"+response.message+"</span>");
                 console.error('Coupon application failed:', response.message);
             }
         },
@@ -392,12 +395,13 @@ $('#coupon-container').on('click', '#remove-discount', function(event) {
                 $("#discount_value").html(response.discount);
                 $("#coupon-container").html('');
             } else {
-                console.error('Coupon application failed:', response.message);
+                console.error('Coupon application failed:',response.message);
             }
         },
         error: function(xhr, status, error) {
             console.error('AJAX Error:', error);
             console.log('Raw Response:', xhr.responseText);
+            var response = JSON.parse(xhr.responseText);
         }
     })
 });
