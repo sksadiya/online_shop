@@ -131,13 +131,14 @@
                                         </div>
                                   </form>
                                 </div>
+                                <form action="" method="post" id="sendInvoice"  name="sendInvoice">
                                 <div class="card">
                                     <div class="card-body">
                                         <h2 class="h4 mb-3">Send Inovice Email</h2>
                                         <div class="mb-3">
-                                            <select name="status" id="status" class="form-control">
-                                                <option value="">Customer</option>                                                
-                                                <option value="">Admin</option>
+                                            <select name="userType" id="userType" class="form-control">
+                                                <option value="customer">Customer</option>                                                
+                                                <option value="admin">Admin</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">
@@ -145,6 +146,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                </form>
                             </div>
                         </div>
 					</div>
@@ -155,6 +157,7 @@
                 <script>
                 $("#changeOrderStatusForm").submit(function(event) {
                   event.preventDefault();
+                  if(confirm("Are You Sure you want to change status?")) {
                   $.ajax({
                     url:'{{ route('admin.changeOrderStatus',$order->id) }}',
                     type:'POST',
@@ -166,7 +169,26 @@
                     error:function(response){
                       console.log(response);
                     }
-                  })
-                })
+                  });
+                }
+                });
+                $("#sendInvoice").submit(function(event) {
+                  event.preventDefault();
+                  if(confirm("Are You Sure you want to send Email?")) {
+                    $.ajax({
+                    url:'{{ route('admin.sendInvoice',$order->id) }}',
+                    type:'POST',
+                    data:$(this).serializeArray(),
+                    dataType:'json',
+                    success:function(response){
+                     window.location.href = "{{ route('admin.orderDetail',$order->id) }}";
+                    },
+                    error:function(response){
+                      console.log(response);
+                    }
+                  });
+                  }
+                  
+                });
                 </script>
                 @endsection

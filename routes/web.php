@@ -51,6 +51,8 @@ Route::get('/thanks/{orderId}', [cartController::class, 'thankyou'])->name('fron
 Route::post('/get-order-summary', [cartController::class, 'getOrderSummary'])->name('front.summary');
 Route::post('/applyDiscount', [cartController::class, 'applyDiscount'])->name('front.discount');
 Route::post('/removeDiscount', [cartController::class, 'removeCoupon'])->name('remove.discount');
+Route::post('/add-to-wish', [frontController::class, 'addToWishlist'])->name('front.addToWishlist');
+
 
 
 Route::group(['prefix' => 'account'], function () { 
@@ -142,6 +144,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/orders', [orderController::class, 'index'])->name('admin.orders');
         Route::get('/order-detail/{id}', [orderController::class, 'detail'])->name('admin.orderDetail');
         Route::post('/changeOrderStatus/{id}', [orderController::class, 'changeOrderStatus'])->name('admin.changeOrderStatus');
+        Route::post('/send-invoice/{id}', [orderController::class, 'sendInvoiceEmail'])->name('admin.sendInvoice');
 
         Route::get('/getSlug', function (Request $request) {
             $slug = '';

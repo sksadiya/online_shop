@@ -12,4 +12,9 @@ class frontController extends Controller
         $latestProducts = product::orderBy('id','DESC')->where('status',1)->take(8)->get();
         return view('front.home', compact('products' ,'latestProducts') );
     }
+
+    public function addToWishlist(Request $request) {
+        echo "hi";
+    }
 }
+

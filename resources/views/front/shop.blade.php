@@ -114,7 +114,7 @@
                                     @else
                                     <a href="{{ route('front.product', $pro->slug) }}" class="product-img"><img class="card-img-top" src="{{ asset('admin-assets/img/default-150x150.png') }}" alt=""></a>
                                     @endif
-                                    <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
+                                    <a class="whishlist" href="javascript:void(0)" onclick="addToWishlist({{ $pro->id }});"><i class="far fa-heart"></i></a>                            
 
                                     <div class="product-action">
                                         <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{ $pro->id }});">

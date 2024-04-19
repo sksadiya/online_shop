@@ -11,13 +11,21 @@ function get_categories() {
     ->where('showHome','Yes')->get();
 }
 
-function OrderEmail($orderId) {
+function OrderEmail($orderId ,$userType="customer") {
     $order = Order::where('id',$orderId)->with('items')->first();
+    if($userType == 'customer') {
+        $subject = 'Thanks for your order';
+        $email = $order->email;
+    } else {
+        $subject = 'New Order';
+        $email = env('ADMIN_EMAIL');
+    }
     $mailData =[
-        'subject' => 'Thanks for your order',
-        'order' => $order
+        'subject' => $subject,
+        'order' => $order,
+        'userType' => $userType
     ];
-    Mail::to($order->email)->send(new orderEmail($mailData));
+    Mail::to($email)->send(new orderEmail($mailData));
 }
  function countryInfo($id) {
 return Country::where('id',$id)->first();

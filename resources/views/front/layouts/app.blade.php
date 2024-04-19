@@ -205,7 +205,21 @@ function myFunction() {
             		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         		}
     		});
-		
+				function  addToWishlist(id) {
+    $.ajax({
+        url: "{{ route('front.addToWishlist')}}",
+        type:'post',
+        data:{id:id},
+        dataType:'json',
+        success : function(response) {
+        //     if(response.status == true){
+        //    //     window.location.href = "";
+        // } else {
+        //     alert(response.message);
+        // }
+    }
+    })
+ }
 </script>
 </body>
 </html>
