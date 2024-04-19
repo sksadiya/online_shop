@@ -61,11 +61,13 @@
 			</div>
 			<div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
 				<a href="{{ route('account.authenticate') }}" class="nav-link text-dark">My Account</a>
-				<form action="">					
+				<form action="{{ route('shop') }}" method="get">					
 					<div class="input-group">
-						<input type="text" placeholder="Search For Products" class="form-control" aria-label="Amount (to the nearest dollar)">
+						<input type="text" id="searchP" name="searchP" value="{{Request::get('searchP') }}" placeholder="Search For Products" class="form-control" aria-label="Amount (to the nearest dollar)">
 						<span class="input-group-text">
+							<button type="submit" class="input-group-text">
 							<i class="fa fa-search"></i>
+							</button>
 					  	</span>
 					</div>
 				</form>
@@ -179,6 +181,28 @@
 		</div>
 	</div>
 </footer>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button>
+
+<!--Wishlist Modal -->
+<div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="wishlistModalLabel">Success</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="{{ asset('front-assets/js/jquery-3.6.0.min.js') }}"></script>
 <script src="{{ asset('front-assets/js/bootstrap.bundle.5.1.3.min.js') }}"></script>
 <script src="{{ asset('front-assets/js/instantpages.5.1.0.min.js') }}"></script>
@@ -212,11 +236,12 @@ function myFunction() {
         data:{id:id},
         dataType:'json',
         success : function(response) {
-        //     if(response.status == true){
-        //    //     window.location.href = "";
-        // } else {
-        //     alert(response.message);
-        // }
+             if(response.status == true){
+							$('#wishlistModal .modal-body').html(response.message);
+							$('#wishlistModal').modal('show');
+         } else {
+					window.location.href = "{{ route('account.login') }}";
+         }
     }
     })
  }

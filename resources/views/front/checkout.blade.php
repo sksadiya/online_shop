@@ -81,7 +81,6 @@
                                     <div class="mb-3">
                                         <input type="text" name="city" id="city" class="form-control" value="{{ (!empty($adds)) ? $adds->city : ''}}" placeholder="City">
                                     <p></p>          
-
                                     </div>            
                                 </div>
 
@@ -89,7 +88,6 @@
                                     <div class="mb-3">
                                         <input type="text" name="state" id="state" class="form-control" value="{{ (!empty($adds)) ? $adds->state : ''}}" placeholder="State">
                                     <p></p>          
-
                                     </div>            
                                 </div>
                                 
@@ -97,7 +95,6 @@
                                     <div class="mb-3">
                                         <input type="text" name="zip" id="zip" class="form-control" value="{{ (!empty($adds)) ? $adds->zip : ''}}" placeholder="Zip">
                                     <p></p>          
-
                                     </div>            
                                 </div>
 

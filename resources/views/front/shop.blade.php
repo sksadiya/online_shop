@@ -117,9 +117,21 @@
                                     <a class="whishlist" href="javascript:void(0)" onclick="addToWishlist({{ $pro->id }});"><i class="far fa-heart"></i></a>                            
 
                                     <div class="product-action">
-                                        <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{ $pro->id }});">
-                                            <i class="fa fa-shopping-cart"></i> Add To Cart
-                                        </a>                            
+                                    @if ($pro->track_qty == 'Yes')
+                                @if($pro->qty > 0)
+                                <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{ $pro->id }});">
+                                    <i class="fa fa-shopping-cart"></i> Add To Cart
+                                </a>   
+                                @else
+                                <a class="btn btn-dark" href="javascript:void(0)" >
+                                     Out Of Stock
+                                </a>  
+                                @endif
+                                @else
+                                <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{ $pro->id }});">
+                                    <i class="fa fa-shopping-cart"></i> Add To Cart
+                                </a>
+                                @endif                            
                                     </div>
                                 </div>                        
                                 <div class="card-body text-center mt-3">
@@ -189,7 +201,10 @@
             if(brands.length > 0) {
                url += '&brand='+brands.toString()
             }
-
+            var search = $("#searchP").val();
+            if(search != '') {
+                url += '&search='+search;
+            }
             //sorting
             url += '&sort='+$("#sort").val();
             window.location.href = url;

@@ -42,7 +42,9 @@ class shopController extends Controller
                 $products =$products->whereBetween('price',[intval($request->get('price_min')) ,intval($request->get('price_max'))]);
             }
         }
-        
+        if(!empty($request->get('searchP'))) {
+            $products =$products->where('title','like','%'.$request->get('searchP').'%');
+        }
         if(!empty($request->get('sort'))) {
             if($request->get('sort') == 'latest') {
                 $products =$products->orderBy('id','DESC');
@@ -64,13 +66,14 @@ class shopController extends Controller
 
     public function product($slug) {
         $product = product::where('slug',$slug)->with('product_images')->first();
+        //dd($product);
         if($product == null) {
             abort(404);
         }
         $relatedProducts =[];
         if($product->related_products != '') {
             $productArray = explode(',', $product->related_products);
-           $relatedProducts = product::whereIn('id', $productArray)->with('product_images')->get();                
+           $relatedProducts = product::whereIn('id', $productArray)->where('status',1)->with('product_images')->get();                
         }
         return view('front.product', compact('product','relatedProducts'));
     }

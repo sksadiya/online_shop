@@ -96,14 +96,14 @@
                                         <div class="col-4 col-md-3 col-xl-2">
                                             <!-- Image -->
                                             @if(!empty($productImage))
-                                            <a href="product.html"><img src="{{ asset('uploads/products/small/'.$productImage->image) }}" alt="..." class="img-fluid"></a>
+                                            <a href=""><img src="{{ asset('uploads/products/small/'.$productImage->image) }}" alt="..." class="img-fluid"></a>
                                             @endif
                                         </div>
                                         <div class="col">
                                             <!-- Title -->
                                             <p class="mb-4 fs-sm fw-bold">
                                               
-                                                <a class="text-body" href="product.html">{{ $orderItem->name }} x {{ number_format($orderItem->qty ,2) }}</a> <br>
+                                                <a class="text-body" href="">{{ $orderItem->name }} x {{ number_format($orderItem->qty ,2) }}</a> <br>
                                                 <span class="text-muted">{{ $orderItem->price }}</span>
                                             </p>
                                         </div>

@@ -14,6 +14,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CustomerAddress;
 use Validator;
+use Illuminate\Support\Facades\Log;
 
 class cartController extends Controller
 {
@@ -183,7 +184,8 @@ class cartController extends Controller
                 }
             }
 
-        } else {
+        }
+         else {
             $shippingCharge = 0;
             $grandTotal = ($subtotal-$discount);
         }
@@ -202,7 +204,7 @@ class cartController extends Controller
             'city' => 'required',
             'state' => 'required',
             'zip' => 'required',
-            'mobile' => 'required',
+            'mobile' => 'required|digits:10',
         ]);
 
         if ($validator->fails()) {
@@ -257,13 +259,11 @@ class cartController extends Controller
             }
             if ($shippingInfo != null) {
                 $shipping = $totalQty * $shippingInfo->amount;
-
                 $grandTotal = ($subTotal - $discount) + $shipping;
 
             } else {
                 $shippingInfo = shippingCharge::where('country_id', 'rest_of_world')->first();
                 $shipping = $totalQty * $shippingInfo->amount;
-
                 $grandTotal = ($subTotal - $discount) + $shipping;
             }
             $order = new Order;
@@ -299,7 +299,17 @@ class cartController extends Controller
                 $orderItem->price = $item->price;
                 $orderItem->total = $item->price * $item->qty;
                 $orderItem->save();
+
+                //update product stock
+                $productData = Product::find($item->id);
+                if($productData->track_qty == 'Yes') {
+                    $currentQty = $productData->qty;
+                    $updatedQty = $productData->qty - $item->qty;
+                    $productData->qty = $updatedQty;
+                    $productData->save();
+                }
             }
+
             //send order email
             orderEmail($order->id ,'customer');
             session()->flash('success', 'You have placed order successfully');

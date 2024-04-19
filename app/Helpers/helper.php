@@ -3,6 +3,8 @@ use App\Mail\orderEmail;
 use App\Models\Category;
 use App\Models\Country;
 use App\Models\Order;
+use App\Models\product;
+use App\Models\productImage;
 use Illuminate\Support\Facades\Mail;
 function get_categories() {
     return Category::orderBy('name','DESC')
@@ -29,5 +31,8 @@ function OrderEmail($orderId ,$userType="customer") {
 }
  function countryInfo($id) {
 return Country::where('id',$id)->first();
+}
+ function GetproductImage($productId) {
+    return productImage::where('product_id',$productId)->first();
 }
 ?>

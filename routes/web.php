@@ -52,6 +52,7 @@ Route::post('/get-order-summary', [cartController::class, 'getOrderSummary'])->n
 Route::post('/applyDiscount', [cartController::class, 'applyDiscount'])->name('front.discount');
 Route::post('/removeDiscount', [cartController::class, 'removeCoupon'])->name('remove.discount');
 Route::post('/add-to-wish', [frontController::class, 'addToWishlist'])->name('front.addToWishlist');
+Route::delete('/remove-product', [AuthController::class, 'removeFromWish'])->name('front.removeWish');
 
 
 
@@ -68,6 +69,9 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::get('/orders', [AuthController::class, 'orders'])->name('account.orders');
         Route::get('/orderDetail/{orderId}', [AuthController::class, 'orderDetail'])->name('account.orderDetail');
+        Route::get('/wishlist', [AuthController::class, 'wishlists'])->name('account.wishlists');
+        Route::post('/updatePersonalInfo', [AuthController::class, 'updatePersonalInfo'])->name('account.updatePersonalInfo');
+        Route::post('/updateAddressInfo', [AuthController::class, 'updateAddressInfo'])->name('account.updateAddressInfo');
         
     });
 });
