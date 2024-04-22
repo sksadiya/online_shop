@@ -67,8 +67,10 @@ class shopController extends Controller
     }
 
     public function product($slug) {
-        $product = product::where('slug',$slug)->with('product_images')->first();
-        //dd($product);
+        $product = product::where('slug',$slug)
+                            ->withCount('product_ratings')
+                            ->withSum('product_ratings','rating')
+                            ->with('product_images')->first();
         if($product == null) {
             abort(404);
         }
@@ -78,6 +80,12 @@ class shopController extends Controller
            $relatedProducts = product::whereIn('id', $productArray)->where('status',1)->with('product_images')->get();                
         }
         $pages = Page::where('status',1)->get();
-        return view('front.product', compact('product','relatedProducts','pages'));
+        $avgRating = '0.00';
+        $avgRatingPer = 0;
+        if($product->product_ratings_count > 0) {
+            $avgRating = number_format(($product->product_ratings_sum_rating/$product->product_ratings_count),2);
+            $avgRatingPer =($avgRating*100)/5;
+        }
+        return view('front.product', compact('product','relatedProducts','pages','avgRating','avgRatingPer'));
     }
 }

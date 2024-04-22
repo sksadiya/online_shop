@@ -58,7 +58,11 @@ Route::post('/add-to-wish', [frontController::class, 'addToWishlist'])->name('fr
 Route::delete('/remove-product', [AuthController::class, 'removeFromWish'])->name('front.removeWish');
 Route::get('/page/{slug}', [frontController::class, 'page'])->name('front.page');
 Route::post('/send-contact-email', [frontController::class, 'sendContactEmail'])->name('front.sendContactEmail');
-
+Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('account.forgot-password');
+Route::post('/process-forgot-password', [AuthController::class, 'processForgotPassword'])->name('account.process-forgot-password');
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('account.reset-password');
+Route::post('/process-reset-password', [AuthController::class, 'processRestPassword'])->name('account.process-reset-password');
+Route::post('/process-ratings/{id}', [HomeConroller::class, 'ratings'])->name('front.ratings');
 
 
 
@@ -122,6 +126,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/product/delete/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
         Route::get('/product-subCategories', [ProductSubcategoryController::class, 'index'])->name('product-sub.index');
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('products.getProducts');
+        Route::get('/get-ratings', [ProductController::class, 'productRatings'])->name('products.ratings');
+        Route::get('/change-rating-status', [ProductController::class, 'changeRatingStatus'])->name('admin.rating.changeStatus');
 
 
         //productimage contriller
