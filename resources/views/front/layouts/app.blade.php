@@ -148,11 +148,11 @@
 				<div class="footer-card">
 					<h3>Important Links</h3>
 					<ul>
-						<li><a href="about-us.php" title="About">About</a></li>
-						<li><a href="contact-us.php" title="Contact Us">Contact Us</a></li>						
-						<li><a href="#" title="Privacy">Privacy</a></li>
-						<li><a href="#" title="Privacy">Terms & Conditions</a></li>
-						<li><a href="#" title="Privacy">Refund Policy</a></li>
+						@if (!empty($pages))
+						@foreach ($pages as $page)
+						<li><a href="{{ route('front.page',$page->slug) }}" title="About">{{ $page->name }}</a></li>
+						@endforeach
+						@endif
 					</ul>
 				</div>
 			</div>
@@ -182,9 +182,9 @@
 	</div>
 </footer>
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
   Launch demo modal
-</button>
+</button> -->
 
 <!--Wishlist Modal -->
 <div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
@@ -246,5 +246,6 @@ function myFunction() {
     })
  }
 </script>
+
 </body>
 </html>

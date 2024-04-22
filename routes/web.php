@@ -18,6 +18,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\frontController;
 use App\Http\Controllers\shopController;
 use App\Http\Controllers\admin\orderController;
+use App\Http\Controllers\admin\PageController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\adminSettingsController;
 use Illuminate\Support\Str;
 
 /*
@@ -53,6 +56,9 @@ Route::post('/applyDiscount', [cartController::class, 'applyDiscount'])->name('f
 Route::post('/removeDiscount', [cartController::class, 'removeCoupon'])->name('remove.discount');
 Route::post('/add-to-wish', [frontController::class, 'addToWishlist'])->name('front.addToWishlist');
 Route::delete('/remove-product', [AuthController::class, 'removeFromWish'])->name('front.removeWish');
+Route::get('/page/{slug}', [frontController::class, 'page'])->name('front.page');
+Route::post('/send-contact-email', [frontController::class, 'sendContactEmail'])->name('front.sendContactEmail');
+
 
 
 
@@ -72,6 +78,8 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/wishlist', [AuthController::class, 'wishlists'])->name('account.wishlists');
         Route::post('/updatePersonalInfo', [AuthController::class, 'updatePersonalInfo'])->name('account.updatePersonalInfo');
         Route::post('/updateAddressInfo', [AuthController::class, 'updateAddressInfo'])->name('account.updateAddressInfo');
+        Route::get('/changePassword', [AuthController::class, 'changePassword'])->name('account.changePassword');
+        Route::post('/changePasswordPost', [AuthController::class, 'changePasswordPost'])->name('account.changePasswordPost');
         
     });
 });
@@ -149,6 +157,26 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/order-detail/{id}', [orderController::class, 'detail'])->name('admin.orderDetail');
         Route::post('/changeOrderStatus/{id}', [orderController::class, 'changeOrderStatus'])->name('admin.changeOrderStatus');
         Route::post('/send-invoice/{id}', [orderController::class, 'sendInvoiceEmail'])->name('admin.sendInvoice');
+
+        //users
+        Route::get('/user/create', [UserController::class, 'create'])->name('users.create');
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+        Route::delete('/users/delete/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+        Route::post('/users/update/{id}', [UserController::class, 'update'])->name('users.update');
+
+
+        //pages
+        Route::get('/page/create', [PageController::class, 'create'])->name('page.create');
+        Route::get('/page', [PageController::class, 'index'])->name('page.index');
+        Route::post('/page/store', [PageController::class, 'store'])->name('page.store');
+        Route::delete('/page/delete/{id}', [PageController::class, 'destroy'])->name('page.destroy');
+        Route::get('/page/edit/{id}', [PageController::class, 'edit'])->name('page.edit');
+        Route::post('/page/update/{id}', [PageController::class, 'update'])->name('page.update');
+
+        Route::get('/settings', [adminSettingsController::class, 'showChangePasswordForm'])->name('settings.change');
+        Route::post('/password-setting', [adminSettingsController::class, 'changeAdminPasswordSettings'])->name('settings.changeP');
 
         Route::get('/getSlug', function (Request $request) {
             $slug = '';

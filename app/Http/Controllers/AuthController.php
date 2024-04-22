@@ -209,4 +209,38 @@ class AuthController extends Controller
             'message' => "wish product removed successfully"
         ]);
     }
+    public function changePassword() {
+        return view('account.change-password');
+    }
+    public function changePasswordPost(Request $request) {
+        $validator = Validator::make($request->all() ,[
+            'old_password' => 'required',
+            'password' => 'required|min:6|confirmed'
+            // 'password_confirmation' => 'required|min:6',
+        ]);
+
+        if($validator->passes()) {
+            $user = User::select('id','password')->where('id', Auth::user()->id)->first(); 
+            if(!Hash::check($request->old_password ,$user->password)) {
+                session()->flash('error','your old password is incorrect');
+                return response()->json([
+                    'status' => true
+                ]);
+            }
+           User::where('id',$user->id)->update([
+            'password' => Hash::make($request->new_password)
+           ]);
+
+           session()->flash('success','You Updated your password');
+           return response()->json([
+            'status' => true
+        ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+       
+    }
 }

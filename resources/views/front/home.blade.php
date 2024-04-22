@@ -130,7 +130,7 @@
             </div>    
             <div class="row pb-3">
 
-                    @if($products->isNotEmpty())
+                    @if(!empty($products))
                    
                     @foreach($products as $pro)
                     @php
@@ -140,7 +140,7 @@
                     <div class="card product-card">
                         <div class="product-image position-relative">
                             @if(!empty($productImage->image))
-                            <a href="{{ route('front.product', $pro->slug) }}" alt="">><img class="card-img-top" src="{{ asset('uploads/products/small/'.$productImage->image) }}" alt=""></a>
+                            <a href="{{ route('front.product', $pro->slug) }}" alt=""><img class="card-img-top" src="{{ asset('uploads/products/small/'.$productImage->image) }}" alt=""></a>
                             @else
                             <a href="{{ route('front.product', $pro->slug) }}" class="product-img"><img class="card-img-top" src="{{ asset('admin-assets/img/default-150x150.png') }}" alt=""></a>
                             @endif

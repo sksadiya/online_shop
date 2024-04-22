@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brands;
 use App\Models\Category;
+use App\Models\Page;
 use App\Models\product;
 use App\Models\subCategory;
 use Illuminate\Http\Request;
@@ -61,7 +62,8 @@ class shopController extends Controller
         $priceMax = (intval($request->get('price_max')) == 0) ? 1000 : $request->get('price_max');
         $priceMin = intval($request->get('price_min'));
         $sort = $request->get('sort');
-        return view('front.shop' ,compact('categories' ,'brands','products' ,'catSelected','subSelected','brandsArray','priceMax','priceMin','sort'));
+        $pages = Page::where('status',1)->get();
+        return view('front.shop' ,compact('categories' ,'brands','products' ,'catSelected','subSelected','brandsArray','priceMax','priceMin','sort' ,'pages'));
     }
 
     public function product($slug) {
@@ -75,6 +77,7 @@ class shopController extends Controller
             $productArray = explode(',', $product->related_products);
            $relatedProducts = product::whereIn('id', $productArray)->where('status',1)->with('product_images')->get();                
         }
-        return view('front.product', compact('product','relatedProducts'));
+        $pages = Page::where('status',1)->get();
+        return view('front.product', compact('product','relatedProducts','pages'));
     }
 }

@@ -1,8 +1,8 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 				<!-- Brand Logo -->
-				<a href="#" class="brand-link">
-                    <img src="{{asset("admin-assets/img/AdminLTELogo.png")}}" class='img-circle elevation-2' width="40" height="40" alt="">
+				<a href="{{ route('admin.dashboard') }}" class="brand-link">
+                    <img src="{{asset("temp/thumb/1709964194.jpg")}}" class='img-circle elevation-2' width="40" height="40" alt="">
 					<span class="brand-text font-weight-light"><a href="{{ route('home') }}" class="text-white">LARAVEL SHOP</a></span>
 				</a>
 				<!-- Sidebar -->
@@ -65,13 +65,13 @@
 								</a>
 							</li>
 							<li class="nav-item">
-								<a href="users.html" class="nav-link">
+								<a href="{{ route('users.index') }}" class="nav-link">
 									<i class="nav-icon  fas fa-users"></i>
 									<p>Users</p>
 								</a>
 							</li>
 							<li class="nav-item">
-								<a href="pages.html" class="nav-link">
+								<a href="{{ route('page.index') }}" class="nav-link">
 									<i class="nav-icon  far fa-file-alt"></i>
 									<p>Pages</p>
 								</a>
