@@ -178,19 +178,26 @@
                         <div class="card-body p-0 d-none" id="payment-form">
                             <div class="mb-3">
                                 <label for="card_number" class="mb-2">Card Number</label>
-                                <input type="text" name="card_number" id="card_number" placeholder="Valid Card Number" class="form-control">
+                                <input autocomplete='off' class='form-control card-number' size='20' type='text' name="card_number" id="card_number" placeholder="Valid Card Number">
+                                <p></p>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="expiry_date" class="mb-2">Expiry Date</label>
-                                    <input type="text" name="expiry_date" id="expiry_date" placeholder="MM/YYYY" class="form-control">
+                            <div class="row justify-content-center align-items-center p-0">
+                                <div class="col-md-4">
+                                    <label for="expiry_month" class="mb-2">Expiry Month</label>
+                                    <input type="text" name="expiry_month" id="expiry_month" placeholder="MM" class="form-control card-expiry-month" size='2'>
+                                    <p></p>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="expiry_date" class="mb-2">CVV Code</label>
-                                    <input type="text" name="expiry_date" id="expiry_date" placeholder="123" class="form-control">
+                                <div class="col-md-4">
+                                    <label for="expiry_year" class="mb-2">Expiry Year</label>
+                                    <input type="text" name="expiry_year" id="expiry_year" placeholder="YYYY" class="form-control card-expiry-month" size='2'>
+                                    <p></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="card_cvc" class="mb-2">CVV Code</label>
+                                    <input autocomplete='off' class='form-control card-cvc' placeholder='ex. 311' name="card_cvc" id="card_cvc" size='4' type='text'>
+                                    <p></p>
                                 </div>
                             </div>
-                            
                         </div> 
                         <div class="pt-4">
                                 <!-- <a href="#" class="btn-dark btn btn-block w-100">Pay Now</a> -->
@@ -204,6 +211,7 @@
     </section>
 @endsection
 @section('customJs')
+<script src="https://js.stripe.com/v2/"></script>
 <script type="text/javascript">
 $("#payment1").click(function(){ 
     if($(this).is(":checked") == true){
@@ -215,6 +223,7 @@ $("#payment2").click(function(){
         $("#payment-form").removeClass('d-none');
      }
 });
+
 
 $("#orderForm").submit(function(event) {
     event.preventDefault();
@@ -294,6 +303,17 @@ $("#orderForm").submit(function(event) {
                         .removeClass('invalid-feedback')
                         .html("");
                  }
+                if(errors.mobile){
+                        $("#mobile").addClass('is-invalid')
+                        .siblings("p")
+                        .addClass('invalid-feedback')
+                        .html(errors.mobile);
+                 } else {
+                    $("#mobile").removeClass('is-invalid')
+                        .siblings("p")
+                        .removeClass('invalid-feedback')
+                        .html("");
+                 }
                 if(errors.city){
                         $("#city").addClass('is-invalid')
                         .siblings("p")
@@ -327,7 +347,53 @@ $("#orderForm").submit(function(event) {
                         .removeClass('invalid-feedback')
                         .html("");
                  }
-                }  else {
+                 if(errors.card_number){
+                        $("#card_number").addClass('is-invalid')
+                        .siblings("p")
+                        .addClass('invalid-feedback')
+                        .html(errors.card_number);
+                 } else {
+                    $("#card_number").removeClass('is-invalid')
+                        .siblings("p")
+                        .removeClass('invalid-feedback')
+                        .html("");
+                 }
+                 if(errors.expiry_month){
+                        $("#expiry_month").addClass('is-invalid')
+                        .siblings("p")
+                        .addClass('invalid-feedback')
+                        .html(errors.expiry_month);
+                 } else {
+                    $("#expiry_month").removeClass('is-invalid')
+                        .siblings("p")
+                        .removeClass('invalid-feedback')
+                        .html("");
+                 }
+                 if(errors.expiry_year){
+                        $("#expiry_year").addClass('is-invalid')
+                        .siblings("p")
+                        .addClass('invalid-feedback')
+                        .html(errors.expiry_year);
+                 } else {
+                    $("#expiry_year").removeClass('is-invalid')
+                        .siblings("p")
+                        .removeClass('invalid-feedback')
+                        .html("");
+                 }
+                 if(errors.card_cvc){
+                        $("#card_cvc").addClass('is-invalid')
+                        .siblings("p")
+                        .addClass('invalid-feedback')
+                        .html(errors.card_cvc);
+                 } else {
+                    $("#card_cvc").removeClass('is-invalid')
+                        .siblings("p")
+                        .removeClass('invalid-feedback')
+                        .html("");
+                 }
+                }  else if(response.status == "stripe error") {
+                    console.log(response.message)
+                } else {
                     window.location.href = "{{ url('thanks/') }}/"+response.orderId; 
                 }
         }

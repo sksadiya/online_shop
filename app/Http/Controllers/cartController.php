@@ -9,12 +9,19 @@ use App\Models\OrderItems;
 use App\Models\product;
 use App\Models\shippingCharge;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CustomerAddress;
+use Stripe\Charge;
+use Stripe\Token;
 use Validator;
+use Stripe\Exception\CardException;
+use Stripe\Exception\InvalidRequestException;
+use Stripe\Stripe;
 use Illuminate\Support\Facades\Log;
+
 
 class cartController extends Controller
 {
@@ -195,7 +202,7 @@ class cartController extends Controller
 
     public function processCheckout(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $rules =  [
             'first_name' => 'required|min:5',
             'last_name' => 'required',
             'email' => 'required|email',
@@ -205,7 +212,15 @@ class cartController extends Controller
             'state' => 'required',
             'zip' => 'required',
             'mobile' => 'required|digits:10',
-        ]);
+        ];
+       
+        if ($request->payment_method == "stripe") {
+            $rules['card_number'] = 'required';
+            $rules['expiry_month'] = 'required';
+            $rules['expiry_year'] = 'required';
+            $rules['card_cvc'] = 'required';
+        }
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -214,8 +229,6 @@ class cartController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
-
-
         //save user adddress
         $user = Auth::user();
         $customerAddress = CustomerAddress::updateOrCreate(
@@ -234,7 +247,41 @@ class cartController extends Controller
                 'country_id' => $request->country,
             ]
         );
-
+       
+        // if ($request->payment_method == "stripe") {
+        //     // Assuming you have included Stripe PHP library and initialized it properly
+        //     try {
+        //         Stripe::setApiKey(env('STRIPE_SECRET'));
+        //         $token = $request->stripeToken; // Get the token from the request
+        //         // Create a charge using the token
+        //         $charge = Charge::create([
+        //             'amount' => 1000, // Example amount in cents
+        //             'currency' => 'usd',
+        //             'source' => $token,
+        //             'description' => 'Example Charge',
+        //         ]);
+        //         return response()->json(['token' => $token->id], 200);
+           
+        //     } catch (CardException $e) {
+        //         // Handle card errors (e.g., declined card)
+        //         return response()->json([
+        //             'message' => 'Card error: ' . $e->getMessage(),
+        //             'status' => "stripe error",
+        //         ]);
+        //     } catch (InvalidRequestException $e) {
+        //         // Handle invalid request errors (e.g., invalid parameters)
+        //         return response()->json([
+        //             'message' => 'Invalid request error: ' . $e->getMessage(),
+        //             'status' => "stripe error",
+        //         ]);
+        //     } catch (Exception $e) {
+        //         // Handle other exceptions
+        //         return response()->json([
+        //             'message' => 'Error processing payment with Stripe: ' . $e->getMessage(),
+        //             'status' => "stripe error",
+        //         ]);
+        //     }
+        // }
         //save data in orders table
         if ($request->payment_method == "cod") {
             $discountCode = '';
@@ -320,9 +367,7 @@ class cartController extends Controller
                 'message' => "Order Placed Successfully",
                 'orderId' => $order->id
             ]);
-        } else {
-
-        }
+        } 
     }
 
     public function thankyou($id)

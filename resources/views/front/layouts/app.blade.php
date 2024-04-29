@@ -29,7 +29,7 @@
 	<meta name="twitter:image" content="" />
 	<meta name="twitter:image:alt" content="" />
 	<meta name="twitter:card" content="summary_large_image" />
-	
+	<script src="https://js.stripe.com/v3/"></script>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 	<link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick.css') }}" />
@@ -247,6 +247,7 @@ function myFunction() {
     })
  }
 </script>
+
 
 </body>
 </html>

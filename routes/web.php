@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\cartController;
 use App\Http\Controllers\ProductSubcategoryController;
 use App\Http\Controllers\admin\productImageController;
+use App\Http\Controllers\StripePaymentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\frontController;
@@ -40,6 +41,12 @@ use Illuminate\Support\Str;
 // Route::get('/test', function () {
 //    orderEmail(27);
 // });
+
+Route::controller(stripePaymentController::class)->group(function(){
+    Route::get('stripe', 'stripe')->name('stripe');
+    Route::post('stripe', 'stripePost')->name('stripe.post');
+});
+
 
 Route::get('/', [frontController::class, 'index'])->name('home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}', [shopController::class, 'index'])->name('shop');
